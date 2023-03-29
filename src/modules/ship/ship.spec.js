@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import Ship from "./ship";
 
-describe("Ship methods", () => {
+describe("Ship", () => {
   let ship;
 
   beforeEach(() => {
