@@ -20,7 +20,7 @@ module.exports = {
       },
     ],
   },
-  plugins: [new HtmlWebpackPlugin({ title: "Battleship" })],
+  plugins: [new HtmlWebpackPlugin({ title: "Okeanos War" })],
   mode: "production",
   devtool: "inline-source-map",
 };

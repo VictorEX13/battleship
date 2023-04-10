@@ -1,0 +1,134 @@
+/* General Rules */
+
+@font-face {
+    font-family: 'PressStart2P';
+    src: url('./../assets/PressStart2P-Regular.ttf') format('truetype');
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+
+    font-family: 'PressStart2P';
+
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    font-size: 10px;
+    --main-color: rgb(0, 27, 177);
+    --sub-color: rgb(100, 100, 100);
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+/* Blocks */
+
+body {
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+    width: 100vw;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    flex: 1;
+
+    color: var(--main-color);
+    background-color: var(--sub-color);
+
+    padding: 0 2%;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    flex: 8.5;
+
+    background-color: rgb(29, 29, 29);
+}
+
+    .boards {
+        display: flex;
+        justify-content: space-around;
+        flex: 8.5;
+
+        padding: 7.5% 0;
+    }
+
+    .controller {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1.5;
+    }
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0.5;
+
+    color: var(--main-color);
+    background-color: var(--sub-color);
+}
+
+/* Elements */
+
+.board {
+    display: grid;
+    grid-template: repeat(10,1fr) / repeat(10,1fr);
+
+    height: 100%;
+    aspect-ratio: 1/1;
+}
+
+.board-field {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 2.4rem;
+
+    background-color: rgb(9, 145, 199);
+
+    border: 1px solid var(--main-color);
+}
+
+button {
+    padding: 1.5rem;
+}
+
+/* Modifiers */
+
+.board[being-attacked="false"] {
+    pointer-events: none;
+}
+
+.board-field[hit="true"][has-ship="false"]::after {
+    content: 'x';
+}
+
+.board-field[hit="true"][has-ship="true"] {
+    background-color: rgb(170, 0, 0);
+}
+
+.player-board .board-field[hit="false"][has-ship="true"] {
+    background-color: rgb(0, 237, 103);
+}
+
+.comp-board .board-field[hit="false"]:hover {
+    cursor: crosshair;
+}
+
+.comp-board .board-field[hit="false"]:hover,
+button:hover {
+    opacity: 0.7;
+}
