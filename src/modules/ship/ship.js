@@ -1,4 +1,4 @@
-const Ship = (length) => {
+const Ship = (shipLength) => {
   let hits = 0;
 
   const hit = () => {
@@ -6,11 +6,11 @@ const Ship = (length) => {
   };
 
   const isSunk = () => {
-    return length === hits;
+    return shipLength === hits;
   };
 
   return {
-    length,
+    shipLength,
     get hits() {
       return hits;
     },

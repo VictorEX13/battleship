@@ -6,8 +6,8 @@ describe("Player", () => {
   let comp;
 
   beforeEach(() => {
-    player = Player("test");
-    comp = Player("enemy", true);
+    player = Player();
+    comp = Player(true);
   });
 
   test("resetBoard() should set the playerBoard to it's default state", () => {
@@ -44,7 +44,7 @@ describe("Player", () => {
     expect(player.enemyBoard.board[3][3].hitten).toBe(true);
   });
 
-  test("the computer attacks a unhit random coord", () => {
+  test("the computer attacks an unhit random coord", () => {
     comp.setEnemyBoard(player.playerBoard);
     const attackedCoord = comp.attack();
 

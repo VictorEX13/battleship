@@ -24,24 +24,50 @@ describe("GameBoard", () => {
 
   test("placing a ship on a coordinate neighbour to a ship returns false", () => {
     gameBoard.placeShip([5, 5], 4);
-    expect(gameBoard.isAValidCoordinate([4, 5], 4)).toBe(false);
+    expect(gameBoard.isAValidCoordinate([4, 4], 1)).toBe(false);
   });
 
   test("getNeighbourCoordinates returns coordinates neighbour to a ship", () => {
-    expect(gameBoard.getNeighbourCoordinates([7, 7], 1)).toEqual(
-      Array(8).fill({ hasShip: false, hitten: false })
-    );
+    gameBoard.placeShip([5, 5], 4);
+
+    expect(gameBoard.getNeighbourCoordinates([5, 8], 4)).toEqual([
+      gameBoard.board[5][4],
+      gameBoard.board[5][9],
+      gameBoard.board[4][4],
+      gameBoard.board[6][4],
+      gameBoard.board[4][5],
+      gameBoard.board[6][5],
+      gameBoard.board[4][6],
+      gameBoard.board[6][6],
+      gameBoard.board[4][7],
+      gameBoard.board[6][7],
+      gameBoard.board[4][8],
+      gameBoard.board[6][8],
+      gameBoard.board[4][9],
+      gameBoard.board[6][9],
+    ]);
   });
 
-  test("placing a ship modify hasShip and ship properties of a coordinate", () => {
+  test("getShipCoordinates returns all the coordinates a ship occupies", () => {
+    expect(gameBoard.getShipCoordinates([2, 3], 4)).toEqual([
+      gameBoard.board[2][3],
+      gameBoard.board[2][4],
+      gameBoard.board[2][5],
+      gameBoard.board[2][6],
+    ]);
+  });
+
+  test("placing a ship modify hasShip, ship, shipIndex and shipOnVertical properties of a coordinate", () => {
     gameBoard.placeShip([4, 5], 3);
     for (let i = 0; i < 3; i++) {
       expect(gameBoard.board[4][5 + i]).toMatchObject({
         hasShip: true,
         hitten: false,
         ship: {
-          length: 3,
+          shipLength: 3,
         },
+        shipIndex: i,
+        shipOnVertical: false,
       });
     }
   });
@@ -63,7 +89,12 @@ describe("GameBoard", () => {
 
   test("receiveAttack updates only the hitten property of a coordinate if misses a shot", () => {
     gameBoard.receiveAttack([3, 4]);
-    expect(gameBoard.board[3][4]).toEqual({ hasShip: false, hitten: true });
+    expect(gameBoard.board[3][4]).toEqual({
+      hasShip: false,
+      hitten: true,
+      row: 3,
+      col: 4,
+    });
   });
 
   test("receiveAttack call hit() on a ship if the shot hits it", () => {
@@ -77,7 +108,7 @@ describe("GameBoard", () => {
         hasShip: true,
         hitten: true,
         ship: {
-          length: 4,
+          shipLength: 4,
           hits: 3,
         },
       });

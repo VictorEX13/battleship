@@ -55,9 +55,10 @@ main {
     background-color: rgb(29, 29, 29);
 }
 
-    .boards {
+    .main-display {
         display: flex;
         justify-content: space-around;
+        align-items: center;
         flex: 8.5;
 
         padding: 7.5% 0;
@@ -108,7 +109,8 @@ button {
 
 /* Modifiers */
 
-.board[being-attacked="false"] {
+.board:not(.board[under-attack]),
+.board-field[hit="true"] {
     pointer-events: none;
 }
 
@@ -120,7 +122,8 @@ button {
     background-color: rgb(170, 0, 0);
 }
 
-.player-board .board-field[hit="false"][has-ship="true"] {
+.player-board .board-field[hit="false"][has-ship="true"],
+.config-board .board-field[has-ship="true"] {
     background-color: rgb(0, 237, 103);
 }
 
@@ -128,7 +131,14 @@ button {
     cursor: crosshair;
 }
 
+.board:not(.board[under-attack]),
 .comp-board .board-field[hit="false"]:hover,
-button:hover {
+button:not(button[disabled]):hover {
     opacity: 0.7;
+}
+
+.winning-message {
+    font-size: 3rem;
+
+    color: white;
 }

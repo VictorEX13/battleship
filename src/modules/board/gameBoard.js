@@ -9,7 +9,11 @@ const GameBoard = () => {
   };
 
   const switchShipDirection = () => {
-    placeVertically ? (placeVertically = false) : (placeVertically = true);
+    if (placeVertically) {
+      placeVertically = false;
+    } else {
+      placeVertically = true;
+    }
   };
 
   const generateBoard = () => {
@@ -18,7 +22,7 @@ const GameBoard = () => {
     for (let i = 0; i < 10; i++) {
       const row = [];
       for (let j = 0; j < 10; j++) {
-        row.push({ hasShip: false, hitten: false });
+        row.push({ hasShip: false, hitten: false, row: i, col: j });
       }
       defaultBoard.push(row);
     }
@@ -30,40 +34,42 @@ const GameBoard = () => {
 
   const getNeighbourCoordinates = (coord, shipLength) => {
     const result = [];
+    const shipIndex = board[coord[0]][coord[1]].shipIndex;
+    const placingVertically = board[coord[0]][coord[1]].shipOnVertical;
     let rowOffset;
     let columnOffset;
     let mainAxis;
     let crossAxis;
 
-    if (!placeVertically) {
+    if (!placingVertically) {
       mainAxis = coord[0];
-      crossAxis = coord[1];
+      crossAxis = coord[1] - shipIndex;
 
       if (crossAxis - 1 >= 0) {
-        result.push(board[coord[0]][coord[1] - 1]);
+        result.push(board[coord[0]][coord[1] - shipIndex - 1]);
       }
       if (crossAxis + shipLength < 10) {
-        result.push(board[coord[0]][coord[1] + shipLength]);
+        result.push(board[coord[0]][coord[1] - shipIndex + shipLength]);
       }
     } else {
       mainAxis = coord[1];
-      crossAxis = coord[0];
+      crossAxis = coord[0] - shipIndex;
 
       if (crossAxis - 1 >= 0) {
-        result.push(board[coord[0] - 1][coord[1]]);
+        result.push(board[coord[0] - shipIndex - 1][coord[1]]);
       }
       if (crossAxis + shipLength < 10) {
-        result.push(board[coord[0] + shipLength][coord[1]]);
+        result.push(board[coord[0] - shipIndex + shipLength][coord[1]]);
       }
     }
 
     for (let i = -1; i <= shipLength; i++) {
       if (crossAxis + i >= 0 && crossAxis + i < 10) {
-        if (!placeVertically) {
+        if (!placingVertically) {
           rowOffset = -1;
-          columnOffset = i;
+          columnOffset = i - shipIndex;
         } else {
-          rowOffset = i;
+          rowOffset = i - shipIndex;
           columnOffset = -1;
         }
 
@@ -73,10 +79,10 @@ const GameBoard = () => {
         if (mainAxis + 1 < 10) {
           result.push(
             board[
-              coord[0] + (!placeVertically ? Math.abs(rowOffset) : rowOffset)
+              coord[0] + (!placingVertically ? Math.abs(rowOffset) : rowOffset)
             ][
               coord[1] +
-                (placeVertically ? Math.abs(columnOffset) : columnOffset)
+                (placingVertically ? Math.abs(columnOffset) : columnOffset)
             ]
           );
         }
@@ -86,12 +92,29 @@ const GameBoard = () => {
     return result;
   };
 
+  const getShipCoordinates = (coord, shipLength) => {
+    const result = [];
+
+    for (let i = 0; i < shipLength; i++) {
+      if (placeVertically && coord[0] + i < 10) {
+        result.push(board[coord[0] + i][coord[1]]);
+      } else if (!placeVertically && coord[1] + i < 10) {
+        result.push(board[coord[0]][coord[1] + i]);
+      }
+    }
+
+    return result;
+  };
+
   const isAValidCoordinate = (coord, shipLength) => {
     if (
-      !board[coord[0]][coord[1]].hasShip &&
-      !board[coord[0]][coord[1]].firstNeighbour &&
-      !board[coord[0]][coord[1]].secondNeighbour &&
-      !board[coord[0]][coord[1]].thirdNeighbour &&
+      getShipCoordinates(coord, shipLength).every(
+        (coord) =>
+          !coord.hasShip &&
+          !coord.firstNeighbour &&
+          !coord.secondNeighbour &&
+          !coord.thirdNeighbour
+      ) &&
       coord[0] >= 0 &&
       coord[1] >= 0 &&
       ((placeVertically && coord[0] + shipLength - 1 < 10 && coord[1] < 10) ||
@@ -110,16 +133,22 @@ const GameBoard = () => {
 
       board[row][column].hasShip = true;
       board[row][column].ship = Ship(shipLength);
+      board[row][column].shipIndex = 0;
+      board[row][column].shipOnVertical = placeVertically;
 
       if (!placeVertically) {
         for (let i = 1; i < shipLength; i++) {
           board[row][column + i].hasShip = true;
           board[row][column + i].ship = board[row][column].ship;
+          board[row][column + i].shipIndex = i;
+          board[row][column + i].shipOnVertical = placeVertically;
         }
       } else {
         for (let i = 1; i < shipLength; i++) {
           board[row + i][column].hasShip = true;
           board[row + i][column].ship = board[row][column].ship;
+          board[row + i][column].shipIndex = i;
+          board[row + i][column].shipOnVertical = placeVertically;
         }
       }
 
@@ -182,6 +211,7 @@ const GameBoard = () => {
     get placeVertically() {
       return placeVertically;
     },
+    getShipCoordinates,
     isAValidCoordinate,
     getNeighbourCoordinates,
     placeShip,

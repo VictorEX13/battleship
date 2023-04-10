@@ -1,6 +1,6 @@
 import GameBoard from "../board/gameBoard";
 
-const Player = (name, isComp = false) => {
+const Player = (isComp = false) => {
   let playerBoard = GameBoard();
   let enemyBoard;
 
@@ -59,7 +59,6 @@ const Player = (name, isComp = false) => {
   };
 
   return {
-    name,
     get playerBoard() {
       return playerBoard;
     },
