@@ -92,6 +92,74 @@ const GameBoard = () => {
     return result;
   };
 
+  const shuffleArray = (arr) => {
+    for (let i = 0; i < arr.length; i++) {
+      const aux = Math.floor(Math.random() * arr.length);
+      [arr[i], arr[aux]] = [arr[aux], arr[i]];
+    }
+  };
+
+  const getAdjacentSlots = (coord) => {
+    const result = [];
+
+    coord[0] - 1 >= 0 && result.push([coord[0] - 1, coord[1]]);
+
+    coord[0] + 1 < 10 && result.push([coord[0] + 1, coord[1]]);
+
+    coord[1] - 1 >= 0 && result.push([coord[0], coord[1] - 1]);
+
+    coord[1] + 1 < 10 && result.push([coord[0], coord[1] + 1]);
+
+    shuffleArray(result);
+
+    return result;
+  };
+
+  const getPredSuccSlots = (coord) => {
+    const result = [];
+
+    if (board[coord[0]][coord[1]].hasShip) {
+      let offset = 1;
+      let stopSearchOnPositiveSlots = false;
+      let stopSearchOnNegativeSlots = false;
+      let invalidDirectionCounter = 0;
+
+      while (invalidDirectionCounter < 2 && result.length < 2) {
+        if (board[coord[0]][coord[1]].shipOnVertical) {
+          coord[0] - offset >= 0 && !stopSearchOnNegativeSlots
+            ? !board[coord[0] - offset][coord[1]].hitten &&
+              result.push([coord[0] - offset, coord[1]]) &&
+              (stopSearchOnNegativeSlots = true)
+            : invalidDirectionCounter++ && (stopSearchOnNegativeSlots = true);
+
+          coord[0] + offset < 10 && !stopSearchOnPositiveSlots
+            ? !board[coord[0] + offset][coord[1]].hitten &&
+              result.push([coord[0] + offset, coord[1]]) &&
+              (stopSearchOnPositiveSlots = true)
+            : invalidDirectionCounter++ && (stopSearchOnPositiveSlots = true);
+        } else {
+          coord[1] - offset >= 0 && !stopSearchOnNegativeSlots
+            ? !board[coord[0]][coord[1] - offset].hitten &&
+              result.push([coord[0], coord[1] - offset]) &&
+              (stopSearchOnNegativeSlots = true)
+            : invalidDirectionCounter++ && (stopSearchOnNegativeSlots = true);
+
+          coord[1] + offset < 10 && !stopSearchOnPositiveSlots
+            ? !board[coord[0]][coord[1] + offset].hitten &&
+              result.push([coord[0], coord[1] + offset]) &&
+              (stopSearchOnPositiveSlots = true)
+            : invalidDirectionCounter++ && (stopSearchOnPositiveSlots = true);
+        }
+
+        offset++;
+      }
+    }
+
+    shuffleArray(result);
+
+    return result;
+  };
+
   const getShipCoordinates = (coord, shipLength) => {
     const result = [];
 
@@ -212,6 +280,8 @@ const GameBoard = () => {
       return placeVertically;
     },
     getShipCoordinates,
+    getAdjacentSlots,
+    getPredSuccSlots,
     isAValidCoordinate,
     getNeighbourCoordinates,
     placeShip,

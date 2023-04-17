@@ -64,6 +64,23 @@ main {
         padding: 7.5% 0;
     }
 
+        .config {
+            display: flex;
+            justify-content: space-between;
+            flex: 0.4;
+            gap: 5%;
+        }
+
+            .config-board {
+                flex: 1
+            }
+
+            .config-controls {
+                display: flex;
+                flex-direction: column;
+                gap: 5%;
+            }
+
     .controller {
         display: flex;
         justify-content: center;

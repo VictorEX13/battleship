@@ -48,6 +48,41 @@ describe("GameBoard", () => {
     ]);
   });
 
+  test("getAdjacentSlots returns slots adjacent to a coordinate", () => {
+    expect(gameBoard.getAdjacentSlots([5, 5])).toEqual(
+      expect.arrayContaining([
+        [4, 5],
+        [6, 5],
+        [5, 4],
+        [5, 6],
+      ])
+    );
+  });
+
+  test("getPredSuccSlots returns predecessor and successor slots of a coordinate occupied by a ship", () => {
+    gameBoard.placeShip([5, 5], 4);
+
+    expect(gameBoard.getPredSuccSlots([5, 5])).toEqual(
+      expect.arrayContaining([
+        [5, 4],
+        [5, 6],
+      ])
+    );
+  });
+
+  test("getPredSuccSlots ignores coordinates that already have been attacked", () => {
+    gameBoard.placeShip([5, 5], 4);
+    gameBoard.receiveAttack([5, 6]);
+    gameBoard.receiveAttack([5, 7]);
+
+    expect(gameBoard.getPredSuccSlots([5, 7])).toEqual(
+      expect.arrayContaining([
+        [5, 5],
+        [5, 8],
+      ])
+    );
+  });
+
   test("getShipCoordinates returns all the coordinates a ship occupies", () => {
     expect(gameBoard.getShipCoordinates([2, 3], 4)).toEqual([
       gameBoard.board[2][3],

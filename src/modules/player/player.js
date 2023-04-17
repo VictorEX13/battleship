@@ -3,6 +3,7 @@ import GameBoard from "../board/gameBoard";
 const Player = (isComp = false) => {
   let playerBoard = GameBoard();
   let enemyBoard;
+  let slotsToTry = [];
 
   const resetBoard = () => {
     playerBoard = GameBoard();
@@ -47,10 +48,28 @@ const Player = (isComp = false) => {
       let attacked = false;
 
       while (!attacked) {
-        coordToAttack = randomCoord();
+        const numberOfSlotsToTry = slotsToTry.length;
+        coordToAttack =
+          numberOfSlotsToTry > 0 ? slotsToTry.shift() : randomCoord();
+
         if (!enemyBoard.board[coordToAttack[0]][coordToAttack[1]].hitten) {
           enemyBoard.receiveAttack(coordToAttack);
           attacked = true;
+
+          if (enemyBoard.board[coordToAttack[0]][coordToAttack[1]].hasShip) {
+            if (
+              !enemyBoard.board[coordToAttack[0]][
+                coordToAttack[1]
+              ].ship.isSunk()
+            ) {
+              slotsToTry =
+                numberOfSlotsToTry > 0
+                  ? enemyBoard.getPredSuccSlots(coordToAttack)
+                  : enemyBoard.getAdjacentSlots(coordToAttack);
+            } else {
+              slotsToTry = [];
+            }
+          }
         }
       }
 
